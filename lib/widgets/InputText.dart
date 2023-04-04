@@ -9,7 +9,7 @@ Widget InputText(BuildContext context, String label, String hintText, TextEditin
     children: [
       Padding(
         padding: const EdgeInsets.only(left: 20.0),
-        child: UText(label, Colors.black, FontWeight.w800, 18),
+        child: UText(label, Colors.black, FontWeight.w800, 18, TextAlign.start),
       ),
       Card(
         shadowColor: Colors.transparent,

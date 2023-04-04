@@ -31,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
           SizedBox(height: getHeight(context)/25,),
           RoadCarImage(context),
           SizedBox(height: getHeight(context)/7.5),
-          AppTitle(context, 35),
+          AppTitle(context, 35, "UberHealth EasyMove"),
           const SizedBox(height: 40,),
           InputText(context, 'Sns', 'Introduza o seu nº do SNS', snsCtrl),
           const SizedBox(height: 15,),

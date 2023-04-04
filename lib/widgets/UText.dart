@@ -2,7 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 
-Widget UText(String text, Color color, FontWeight wei, double size){
+Widget UText(String text, Color color, FontWeight wei, double size, TextAlign align){
   return Text(
     text,
     style: TextStyle(
@@ -10,7 +10,8 @@ Widget UText(String text, Color color, FontWeight wei, double size){
       color: color,
       fontFamily: 'Alegreya',
       fontWeight: wei,
-      fontSize: size
+      fontSize: size,
     ),
+    textAlign: align,
   );
 }
