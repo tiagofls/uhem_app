@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:uhem_app/pages/AccessCodeScreen.dart';
 import 'package:uhem_app/pages/ConfAccessCode.dart';
+import 'package:uhem_app/pages/HistoryScreen.dart';
+import 'package:uhem_app/pages/HomePageScreen.dart';
 import 'package:uhem_app/pages/LoginScreen.dart';
 
 void main() {
@@ -15,7 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(fontFamily: 'Alegreya'),
-      home: const ConfirmAccessCode(),
+      home: const HistoryScreen(),
     );
   }
 }
