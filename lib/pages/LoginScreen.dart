@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:uhem_app/constants/Constants.dart';
+import 'package:uhem_app/functions/Login.dart';
 import 'package:uhem_app/widgets/RoadCarImage.dart';
 
 import '../widgets/AppTitle.dart';
 import '../widgets/InputText.dart';
 import '../widgets/UButton.dart';
 import '../widgets/ULink.dart';
+import '../functions/UAlertDialog.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -37,7 +39,9 @@ class _LoginScreenState extends State<LoginScreen> {
           const SizedBox(height: 15,),
           InputText(context, 'Código de Acesso', 'Introduza o seu código de acesso', caCtrl),
           const SizedBox(height: 25,),
-          UButton((){}, "Entrar", Colors.white, const Color(0xFF156064), const StadiumBorder(), 
+          UButton((){
+            Login(context, snsCtrl.text, caCtrl.text);
+          }, "Entrar", Colors.white, const Color(0xFF156064), const StadiumBorder(), 
           20, FontWeight.w700, 4.0, const Color(0xFF00C49A)),
           SizedBox(height: getHeight(context)/6,),
           ULink((){}, "Como obtenho o meu código de acesso?", Colors.grey, 15)
