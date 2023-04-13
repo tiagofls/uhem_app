@@ -1,18 +1,20 @@
 import 'package:flutter/cupertino.dart';
 
-double getWidth(BuildContext context){
+double getWidth(BuildContext context) {
   return MediaQuery.of(context).size.width;
 }
 
-double getHeight(BuildContext context){
+double getHeight(BuildContext context) {
   return MediaQuery.of(context).size.height;
 }
+
+bool loading = false;
 
 const obgFields = "Campos Obrigatórios";
 
 const invalidCred = "Credenciais inválidas!";
 
-const missSns = "Sns por preencher!"; 
+const missSns = "Sns por preencher!";
 
 const missCode = "Código de Acesso por preencher!";
 
