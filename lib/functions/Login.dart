@@ -7,6 +7,7 @@ import 'package:uhem_app/constants/Constants.dart';
 import 'package:uhem_app/constants/UhemAPI.dart';
 import 'package:uhem_app/functions/UAlertDialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uhem_app/routes/RouterConstants.dart';
 
 Future<bool> Login(BuildContext context, String sns, String code) async {
   if (await CheckLoginInputs(context, sns, code)) {
@@ -50,19 +51,19 @@ Future<bool> Authenticate(String sns, String code) async {
       "${baseUrl}LoginInfo/verify_pwd?sns=$sns&password=$code&flag=USER";
 
   var mUrl = Uri.parse(url);
-  print(mUrl);
   var res = await http.get(mUrl, headers: headers);
-
+  
   if (res.body == "false") {
     return false;
   } else {
+    addStringToSF(sns);
     return true;
   }
 }
 
-addStringToSF(String username) async {
+addStringToSF(String sns) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  prefs.setString('stringValue', username);
+  prefs.setString('stringValue', sns);
 }
 
 Future<bool> getStringValuesSF() async {
@@ -76,3 +77,46 @@ removeValues() async {
   //Remove String
   prefs.remove("stringValue");
 }
+
+logout(BuildContext context){
+  removeValues();
+  Navigator.pushNamed(context, LoginViewRoute);
+}
+
+Future<bool> verifyGenerateAccessCode(String myToken, String username) async{
+
+  var headers = {
+    'accept': 'text/plain',
+  };
+
+  String url =
+      "${baseUrl}LoginInfo/verify_gen_ac?token=$myToken&username=$username";
+
+  var mUrl = Uri.parse(url);
+  var res = await http.get(mUrl, headers: headers);
+  
+  if (res.body == "false") {
+    return false;
+  } else {
+    return true;
+  }
+
+}
+
+Future<bool> GenerateToken(String sns, String username) async{
+   var headers = {
+    'accept': 'text/plain',
+  };
+
+  String url =
+      "${baseUrl}LoginInfo/token?sns=$sns&username=$username";
+  var mUrl = Uri.parse(url);
+  var res = await http.get(mUrl, headers: headers);
+  print("Result: " + res.body + "->" + res.toString());
+  if (res.body == "false" || res.body.contains("xception")) {
+    return false;
+  } else {
+    return true;
+  }
+}
+

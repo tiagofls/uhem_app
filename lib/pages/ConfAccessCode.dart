@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:uhem_app/functions/Login.dart';
+import 'package:uhem_app/functions/UAlertDialog.dart';
+import 'package:uhem_app/pages/AccessCodeScreen.dart';
+import 'package:uhem_app/routes/RouterConstants.dart';
 
 import '../constants/Constants.dart';
 import '../widgets/AppTitle.dart';
@@ -18,7 +22,8 @@ class ConfirmAccessCode extends StatefulWidget {
 }
 
 class _ConfirmAccessCodeState extends State<ConfirmAccessCode> {
-    TextEditingController emailCtrl = TextEditingController();
+    TextEditingController codeCtrl = TextEditingController();
+    TextEditingController snsCtrl = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -45,12 +50,23 @@ class _ConfirmAccessCodeState extends State<ConfirmAccessCode> {
             const SizedBox(
               height: 40,
             ),
-          InputText(context, 'Código de Confirmação', 'Introduza o código de confirmação', emailCtrl),
+          InputText(context, 'Código de Confirmação', 'Introduza o código de confirmação', codeCtrl),
+                    const SizedBox(height: 10,),
+
+          InputText(context, 'SNS', 'Introduza novamente o seu nº SNS', snsCtrl),
           const SizedBox(height: 25,),
-            UButton((){}, "Continuar", Colors.white, const Color(0xFF156064), const StadiumBorder(), 
+            UButton(() async{
+              if(await verifyGenerateAccessCode(codeCtrl.text, snsCtrl.text)){
+                addStringToSF(snsCtrl.text);
+                Navigator.pushNamed(context, HomeViewRoute);
+              }
+              else{
+                UAlertDialog(context, 'Erro', 'Código de Acesso inválido!');
+              }
+            }, "Continuar", Colors.white, const Color(0xFF156064), const StadiumBorder(), 
           20, FontWeight.w700, 4.0, const Color(0xFF00C49A)),
           SizedBox(height: getHeight(context)/9,),
-          ULink((){}, "Não recebi nenhum código no meu e-mail", Colors.grey, 15)
+          ULink((){Navigator.pushNamed(context, AccessCodeViewRoute);}, "Não recebi nenhum código no meu e-mail", Colors.grey, 15)
           ],
         ));
   }

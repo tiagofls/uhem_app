@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:http/http.dart';
+import 'package:uhem_app/functions/Login.dart';
 import 'package:uhem_app/widgets/UText.dart';
 
 import '../constants/Constants.dart';
@@ -36,7 +38,17 @@ class _HomePageScreenState extends State<HomePageScreen> {
           TravelTile(context),
           TravelTile(context),
           SizedBox(height: getHeight(context)/20,),
-          ULink((){}, "Histórico", Colors.grey, 20)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ULink((){}, "Histórico", Colors.grey, 20),
+              SizedBox(width: getWidth(context)/7,),
+              ULink((){
+                logout(context);
+              }, "Sair", Colors.red, 20)
+            ],
+          )
         ],
       )
     );

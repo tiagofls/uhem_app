@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:uhem_app/constants/Constants.dart';
 import 'package:uhem_app/functions/Login.dart';
+import 'package:uhem_app/pages/AccessCodeScreen.dart';
+import 'package:uhem_app/routes/RouterConstants.dart';
 import 'package:uhem_app/widgets/RoadCarImage.dart';
 
 import '../widgets/AppTitle.dart';
@@ -44,14 +46,15 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(
               height: 25,
             ),
-            UButton(() {
+            UButton(() async {
               setState(() {
                 loading = true;
               });
-              Login(context, snsCtrl.text, caCtrl.text);
+              bool res = await Login(context, snsCtrl.text, caCtrl.text);
               setState(() {
                 loading = false;
               });
+              if (res) Navigator.pushNamed(context, HomeViewRoute);
             },
                 "Entrar",
                 Colors.white,
@@ -65,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
               height: getHeight(context) / 6,
             ),
             ULink(
-                () {}, "Como obtenho o meu código de acesso?", Colors.grey, 15)
+                () {Navigator.pushNamed(context, AccessCodeViewRoute);}, "Como obtenho o meu código de acesso?", Colors.grey, 15)
           ],
         ));
   }
