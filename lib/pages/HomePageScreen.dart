@@ -8,6 +8,7 @@ import 'package:uhem_app/functions/Login.dart';
 import 'package:uhem_app/functions/Patient.dart';
 import 'package:uhem_app/models/Appointment.dart';
 import 'package:uhem_app/models/Patient.dart';
+import 'package:uhem_app/pages/HistoryCuidadorScreen.dart';
 import 'package:uhem_app/widgets/UText.dart';
 
 import '../constants/Constants.dart';

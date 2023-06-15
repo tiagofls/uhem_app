@@ -10,6 +10,7 @@ import '../functions/Login.dart';
 import '../functions/Patient.dart';
 import '../functions/Travel.dart';
 import '../functions/Utils.dart';
+import '../models/Appointment.dart';
 import '../models/Patient.dart';
 import '../models/Travel.dart';
 import '../routes/RouterConstants.dart';
@@ -60,7 +61,7 @@ String username = '';
                 height: 40,
               ),
               UText(
-                "Próximas viagens",
+                "Próximas Consultas",
                 Colors.grey,
                 FontWeight.w900,
                 18,
@@ -72,32 +73,32 @@ String username = '';
               SizedBox(
                 height: getHeight(context) / 3.5,
                 child: SingleChildScrollView(
-                  child: FutureBuilder<List<Travel>>(
+                  child: FutureBuilder<List<Appointment>>(
                     future:
-                        getTravel(), // Replace with your REST call to fetch travel data
+                        getAppointment(), // Replace with your REST call to fetch travel data
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         final travelList = snapshot.data!;
                         return Column(
                           children: travelList
                               .map(
-                                (travel) => GestureDetector(
+                                (app) => GestureDetector(
                                   onTap: () async {
-                                    var prefs = await SharedPreferences.getInstance();
-                                    prefs.setString('date', getDate(travel.dateTravel.toString()));
-                                    prefs.setString('destination', travel.idFacility.toString());
-                                    prefs.setString('duration', travel.duration.toString());
-                                    prefs.setString('purpose', travel.idTravelPurpose.toString());
-                                    prefs.setString('time', getTime(travel.dateTravel!));
-
+                                    SharedPreferences prefs = await SharedPreferences.getInstance();
+                                    prefs.setString('date', app.appointmentDate!.split(" ")[0]);
+                                    prefs.setString('time', app.appointmentDate!.split(" ")[1]);
+                                    prefs.setString('destination', app.idFacility.toString());
+                                    prefs.setString('purpose', app.appointment.toString());
+                                    prefs.setString('hasTravel', app.idTravel.toString());
+                                    prefs.setString('id_appointment', app.id.toString());
                                     Navigator.pushNamed(context, CuidadorDetailViewRoute);
                                   },
                                   child: TravelTile(
                                     context,
-                                    getDate(travel.dateTravel!),
-                                    travel.idTravelPurpose.toString(),
-                                    travel.duration.toString(),
-                                    ""
+                                    app.appointmentDate!.split(" ")[0],
+                                    app.appointment.toString(),
+                                    app.nameFacility,
+                                    app.appointmentDate!.split(" ")[1]
                                   ),
                                 ),
                               )
@@ -108,7 +109,7 @@ String username = '';
                       }
                       return const LoadingIndicator(
                         indicatorType: Indicator.ballClipRotatePulse,
-                        colors: [Color.fromARGB(255, 26, 103, 76)],
+                        colors: [Color.fromARGB(255, 49, 179, 255)],
                       );
                     },
                   ),

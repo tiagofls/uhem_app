@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
@@ -8,10 +9,13 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uhem_app/functions/UAlertDialog.dart';
 import 'package:uhem_app/functions/Utils.dart';
+import 'package:uhem_app/widgets/UButton.dart';
 
 import '../constants/Constants.dart';
 import '../functions/Login.dart';
+import '../functions/Travel.dart';
 import '../routes/RouterConstants.dart';
 import '../widgets/AppTitle.dart';
 import '../widgets/RoadCarImage.dart';
@@ -78,6 +82,7 @@ class _CuidadorDetailTravelState extends State<CuidadorDetailTravel> {
     }
 
   late SharedPreferences prefs;
+  late String hospital;
 
   @override
   void initState() {
@@ -87,11 +92,15 @@ class _CuidadorDetailTravelState extends State<CuidadorDetailTravel> {
 
   Future<void> initSharedPreferences() async {
     prefs = await SharedPreferences.getInstance();
+    hospital = await getFacilityName(prefs.getString('destination') ?? "12");
     setState(() {}); // Trigger a rebuild after prefs is initialized
   }
 
   @override
-  Widget build(BuildContext context) { return Container(
+  Widget build(BuildContext context) { 
+  List<String> carData = generateCarData(10);
+  List<String> carCompany = ["Uber", "Bolt", "Lyft"];
+    return Container(
         color: const Color.fromRGBO(255, 255, 255, 1),
         child: Column(children: [
           SizedBox(
@@ -103,7 +112,8 @@ class _CuidadorDetailTravelState extends State<CuidadorDetailTravel> {
           const SizedBox(
             height: 45,
           ),
-          SizedBox(
+          if(int.parse(prefs.getString('hasTravel') ?? "0") > int.parse("0"))... {
+            SizedBox(
             height: getHeight(context) / 3.5,
             child: FutureBuilder<CarRoute>(
               future: getCarRoute(prefs.getString('home') ?? '', (prefs.getString('destination') ?? '') + ", Portugal"),
@@ -138,7 +148,7 @@ class _CuidadorDetailTravelState extends State<CuidadorDetailTravel> {
                 } else {
                   return const LoadingIndicator(
                         indicatorType: Indicator.ballClipRotatePulse,
-                        colors: [ Colors.blue],
+                        colors: [Color.fromARGB(255, 46, 189, 255)],
                       );
                 }
               },
@@ -152,9 +162,9 @@ class _CuidadorDetailTravelState extends State<CuidadorDetailTravel> {
             height: getHeight(context) / 60,
           ),
           Padding(
-            padding: EdgeInsets.only(left: getWidth(context) != null ? getWidth(context) / 6 : 40),
+            padding: EdgeInsets.only(left: getWidth(context) != null ? getWidth(context) / 5 : 40),
             child: SizedBox(
-  width: getWidth(context) / 1.5,
+  width: getWidth(context) / 1.3,
   child: Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -188,7 +198,19 @@ class _CuidadorDetailTravelState extends State<CuidadorDetailTravel> {
               children: [
                 const Icon(CupertinoIcons.map_pin_ellipse, size: 25, color: Colors.grey),
                 SizedBox(width: getWidth(context) / 10),
-                UText(prefs.getString('destination') ?? '', Colors.grey, FontWeight.w500, 19, TextAlign.start),
+                UText(hospital, Colors.grey, FontWeight.w500, 19, TextAlign.start),
+              ],
+            ),
+            SizedBox(height: 5),
+        ],
+      ),
+      Column(
+        children: [
+            Row(
+              children: [
+                const Icon(CupertinoIcons.clock, size: 25, color: Colors.grey),
+                SizedBox(width: getWidth(context) / 10),
+                UText((formatTimePrev((prefs.getString('time') ?? '')) + " H") + "     Viagem", Colors.grey, FontWeight.w500, 19, TextAlign.start),
               ],
             ),
             SizedBox(height: 5),
@@ -200,7 +222,7 @@ class _CuidadorDetailTravelState extends State<CuidadorDetailTravel> {
               children: [
                 const Icon(CupertinoIcons.clock_fill, size: 25, color: Colors.grey),
                 SizedBox(width: getWidth(context) / 10),
-                UText((prefs.getString('time') ?? '') + " H", Colors.grey, FontWeight.w500, 19, TextAlign.start),
+                UText((formatTime((prefs.getString('time') ?? '')) + " H") + "     Consulta", Colors.grey, FontWeight.w500, 19, TextAlign.start),
               ],
             ),
             SizedBox(height: 5),
@@ -210,9 +232,21 @@ class _CuidadorDetailTravelState extends State<CuidadorDetailTravel> {
         children: [
             Row(
               children: [
-                const Icon(CupertinoIcons.timer, size: 25, color: Colors.grey),
+                const Icon(CupertinoIcons.building_2_fill, size: 25, color: Colors.grey),
                 SizedBox(width: getWidth(context) / 10),
-                UText((prefs.getString('duration') ?? '') + " H", Colors.grey, FontWeight.w500, 19, TextAlign.start),
+                UText(carCompany[Random().nextInt(carCompany.length)], Colors.grey, FontWeight.w500, 19, TextAlign.start),
+              ],
+            ),
+            SizedBox(height: 5),
+        ],
+      ),
+      Column(
+        children: [
+            Row(
+              children: [
+                const Icon(CupertinoIcons.car_detailed, size: 25, color: Colors.grey),
+                SizedBox(width: getWidth(context) / 10),
+                UText(carData[Random().nextInt(10)], Colors.grey, FontWeight.w500, 19, TextAlign.start),
               ],
             ),
             SizedBox(height: 5),
@@ -224,8 +258,47 @@ class _CuidadorDetailTravelState extends State<CuidadorDetailTravel> {
           ),
 
           SizedBox(
-            height: getHeight(context) / 50,
-          ),
+            height: getHeight(context) / 250,
+          )}
+          else if(prefs.getString('hasTravel') == "0")...{
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: UText('Ainda não tem viagem marcada para esta consulta. Deseja agendar uma?', Colors.black, FontWeight.w400, 18, TextAlign.center),
+                ),
+                SizedBox(height: 10,),
+                UButton(() async {
+                  String id = await prefs.getString("id_appointment") ?? "";
+                  if(await setCallTravel(id)){
+                    await UAlertDialog(context, "Sucesso", "Irá ser contactado brevemente para finalizar o agendamento!");
+                    Navigator.pushNamed(context, CuidadorHomeRoute);
+                  }
+                  else UAlertDialog(context, "Erro", "Ocorreu um erro. Tente mais tarde!");
+                }, "Agendar", Colors.white, Color.fromARGB(255, 0, 133, 167), const StadiumBorder(), 
+          20, FontWeight.w700, 4.0, Color.fromARGB(255, 50, 190, 255))
+              ],
+              
+            ),
+            SizedBox(height: 30,)
+          }
+          else...{
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: UText('Recebemos o seu pedido de agendamente com sucesso! A instituição responsável, irá entrar em contacto consigo, brevemente.\n Obrigado!', Colors.black, FontWeight.w400, 18, TextAlign.center),
+                ),
+                
+              ],
+              
+            ),
+            SizedBox(height: 30,)
+          },
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -233,7 +306,7 @@ class _CuidadorDetailTravelState extends State<CuidadorDetailTravel> {
               GestureDetector(
                 onTap: () {
                   // Handle history link click here
-                  Navigator.pushNamed(context, CuidadorHomeRoute);
+                  Navigator.pushNamed(context, HomeViewRoute);
                 },
                 child: ULink(
                   () async {
@@ -248,4 +321,79 @@ class _CuidadorDetailTravelState extends State<CuidadorDetailTravel> {
           ),
         ]));
   }
+
+  String formatTime(String timeString) {
+    String pattern = r'^(\d{2}:\d{2})';
+
+    RegExp regex = RegExp(pattern);
+    Match? match = regex.firstMatch(timeString);
+
+    if (match != null) {
+      String extractedTime = match.group(1)!;
+      return extractedTime;
+    } else
+      return "";
+  }
+
+  String formatTimePrev(String timeString) {
+  String pattern = r'^(\d{2}):(\d{2}):(\d{2})';
+
+  RegExp regex = RegExp(pattern);
+  Match? match = regex.firstMatch(timeString);
+
+  if (match != null) {
+    int hours = int.parse(match.group(1)!);
+    int minutes = int.parse(match.group(2)!);
+
+    // Subtract 2 hours from the original time
+    hours = (hours - 2) % 24;
+
+    String formattedTime = '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}';
+    return formattedTime;
+  } else {
+    return "";
+  }
+}
+
+  List<String> generateCarData(int length) {
+  List<String> carBrands = ['Toyota', 'Honda', 'Ford', 'Chevrolet', 'BMW'];
+  List<String> carModels = ['Camry', 'Civic', 'Mustang', 'Cruze', 'X5'];
+  List<String> carData = [];
+
+  Random random = Random();
+
+  for (int i = 0; i < length; i++) {
+    String brand = carBrands[random.nextInt(carBrands.length)];
+    String model = carModels[random.nextInt(carModels.length)];
+    String registrationPlate = generateRegistrationPlate(random);
+    String carInfo = '$brand $model $registrationPlate';
+
+    carData.add(carInfo);
+  }
+
+  return carData;
+}
+
+String generateRegistrationPlate(Random random) {
+  String letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  String numbers = '0123456789';
+
+  String plate = '';
+
+  // Generate the first two letters
+  plate += letters[random.nextInt(letters.length)];
+  plate += letters[random.nextInt(letters.length)];
+
+  // Generate the dash and next two numbers
+  plate += '-';
+  plate += numbers[random.nextInt(numbers.length)];
+  plate += numbers[random.nextInt(numbers.length)];
+
+  // Generate the last two letters
+  plate += '-';
+  plate += letters[random.nextInt(letters.length)];
+  plate += letters[random.nextInt(letters.length)];
+
+  return plate;
+}
 }
