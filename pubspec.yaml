@@ -38,7 +38,12 @@ dependencies:
   cupertino_icons: ^1.0.2
   http: ^0.13.5
   loading_indicator: ^3.1.0
+  geocoding: ^2.0.0
   shared_preferences:
+  intl: ^0.17.0
+  marquee: ^2.0.4
+  flutter_map: ^0.13.0
+  flutter_polyline_points: ^0.2.0
 
 dev_dependencies:
   flutter_test:

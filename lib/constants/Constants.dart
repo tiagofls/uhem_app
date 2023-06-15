@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:uhem_app/models/Patient.dart';
 
 double getWidth(BuildContext context) {
   return MediaQuery.of(context).size.width;
@@ -7,6 +8,8 @@ double getWidth(BuildContext context) {
 double getHeight(BuildContext context) {
   return MediaQuery.of(context).size.height;
 }
+
+Patient pt = Patient("", "", "", "", "", "", "");
 
 bool loading = false;
 

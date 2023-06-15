@@ -24,7 +24,7 @@ class MyHttpOverrides extends HttpOverrides {
 void main() async {
   HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
-  bool prefs = await getStringValuesSF();
+  bool prefs = await getsnssSF();
   runApp(MyApp(prefs: prefs));
 }
 

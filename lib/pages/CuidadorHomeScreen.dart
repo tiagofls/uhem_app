@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:loading_indicator/loading_indicator.dart';
-import 'package:uhem_app/functions/Patient.dart';
-import 'package:uhem_app/models/Patient.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uhem_app/constants/Constants.dart';
 
-import '../constants/Constants.dart';
 import '../functions/Login.dart';
+import '../functions/Patient.dart';
 import '../functions/Travel.dart';
 import '../functions/Utils.dart';
+import '../models/Patient.dart';
 import '../models/Travel.dart';
 import '../routes/RouterConstants.dart';
 import '../widgets/AppTitle.dart';
@@ -18,18 +20,27 @@ import '../widgets/TravelTile.dart';
 import '../widgets/ULink.dart';
 import '../widgets/UText.dart';
 
-class HistoryScreen extends StatefulWidget {
-  const HistoryScreen({super.key});
+class CuidadorHomeScreen extends StatefulWidget {
+  const CuidadorHomeScreen({super.key});
 
   @override
-  State<HistoryScreen> createState() => _HistoryScreenState();
+  State<CuidadorHomeScreen> createState() => _CuidadorHomeScreenState();
 }
 
-class _HistoryScreenState extends State<HistoryScreen> {
+class _CuidadorHomeScreenState extends State<CuidadorHomeScreen> {
+ 
+String username = '';
+
+  @override
+  void initState() {
+    super.initState();
+    getCurrentCuidador();
+  }
+  
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: getPatient(),
+      future: getPatientCuidador(),
       builder: (context, AsyncSnapshot<Patient> p) {
         return Container(
           color: const Color.fromRGBO(255, 255, 255, 1),
@@ -40,16 +51,16 @@ class _HistoryScreenState extends State<HistoryScreen> {
               ),
               RoadCarImage(context),
               SizedBox(height: getHeight(context) / 30),
-              AppTitle(context, 35, "Dashboard"),
+              AppTitleCuidador(context, 35, "Dashboard"),
               const SizedBox(
                 height: 45,
               ),
-              CardID(context, p.data ?? pt),
+              CardIDCuidador(context, p.data ?? pt, "Aurélio Buta"),
               const SizedBox(
                 height: 40,
               ),
               UText(
-                "Histórico",
+                "Próximas viagens",
                 Colors.grey,
                 FontWeight.w900,
                 18,
@@ -63,7 +74,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 child: SingleChildScrollView(
                   child: FutureBuilder<List<Travel>>(
                     future:
-                        getPreviousTravel(), // Replace with your REST call to fetch travel data
+                        getTravel(), // Replace with your REST call to fetch travel data
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         final travelList = snapshot.data!;
@@ -71,13 +82,22 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           children: travelList
                               .map(
                                 (travel) => GestureDetector(
-                                  onTap: () {},
+                                  onTap: () async {
+                                    var prefs = await SharedPreferences.getInstance();
+                                    prefs.setString('date', getDate(travel.dateTravel.toString()));
+                                    prefs.setString('destination', travel.idFacility.toString());
+                                    prefs.setString('duration', travel.duration.toString());
+                                    prefs.setString('purpose', travel.idTravelPurpose.toString());
+                                    prefs.setString('time', getTime(travel.dateTravel!));
+
+                                    Navigator.pushNamed(context, CuidadorDetailViewRoute);
+                                  },
                                   child: TravelTile(
                                     context,
                                     getDate(travel.dateTravel!),
                                     travel.idTravelPurpose.toString(),
-                                    travel.idFacility.toString(),
-                                    travel.dateTravel!.split(" ")[0]
+                                    travel.duration.toString(),
+                                    ""
                                   ),
                                 ),
                               )
@@ -103,14 +123,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      // Handle history link click here
-                      Navigator.pushNamed(context, HistoryScreenRoute);
                     },
                     child: ULink(
                       () {
-                        Navigator.pushNamed(context, HomeViewRoute);
+                        Navigator.pushNamed(context, HistoryCuidadorScreenRoute);
                       },
-                      "Próximas Viagens",
+                      "Histórico",
                       Colors.grey,
                       20,
                     ),

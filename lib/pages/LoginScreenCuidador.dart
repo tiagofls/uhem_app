@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:uhem_app/constants/Constants.dart';
 import 'package:uhem_app/functions/Login.dart';
 import 'package:uhem_app/pages/AccessCodeScreen.dart';
+import 'package:uhem_app/pages/RegisterCuidadorScreen.dart';
 import 'package:uhem_app/routes/RouterConstants.dart';
 import 'package:uhem_app/widgets/RoadCarImage.dart';
 
@@ -11,14 +12,14 @@ import '../widgets/UButton.dart';
 import '../widgets/ULink.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class LoginScreenCuidador extends StatefulWidget {
+  const LoginScreenCuidador({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<LoginScreenCuidador> createState() => _LoginScreenCuidadorState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginScreenCuidadorState extends State<LoginScreenCuidador> {
   TextEditingController snsCtrl = TextEditingController();
   TextEditingController caCtrl = TextEditingController();
 
@@ -33,16 +34,16 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             RoadCarImage(context),
             SizedBox(height: getHeight(context) / 10),
-            AppTitle(context, 35, "MedTransport EasyMove"),
+            AppTitleCuidador(context, 35, "MedTransport EasyMove"),
             const SizedBox(
               height: 40,
             ),
-            InputText(context, 'Sns', 'Introduza o seu nº do SNS', snsCtrl),
+            InputTextCuidador(context, 'Email', 'Introduza o seu email', snsCtrl),
             const SizedBox(
               height: 15,
             ),
-            InputText(context, 'Código de Acesso',
-                'Introduza o seu código de acesso', caCtrl),
+            InputTextCuidador(context, 'Palavra-Passe',
+                'Introduza a sua palavra-passe', caCtrl),
             const SizedBox(
               height: 25,
             ),
@@ -50,35 +51,35 @@ class _LoginScreenState extends State<LoginScreen> {
               setState(() {
                 loading = true;
               });
-              bool res = await Login(context, snsCtrl.text, caCtrl.text);
+              bool res = await LoginCuidador(context, snsCtrl.text, caCtrl.text);
               setState(() {
                 loading = false;
               });
-              if (res) Navigator.pushNamed(context, HomeViewRoute);
+              if (res) Navigator.pushNamed(context, CuidadorHomeRoute);
             },
                 "Entrar",
                 Colors.white,
-                const Color(0xFF156064),
+                Color.fromARGB(255, 0, 18, 67),
                 const StadiumBorder(),
                 20,
                 FontWeight.w700,
                 4.0,
-                const Color(0xFF00C49A)),
+                const Color.fromARGB(255, 38, 186, 255)),
                 SizedBox(height: getHeight(context)/20,),
                 UButton((){
-                  Navigator.pushNamed(context, LoginCuidadorRoute);
-                }, 'MedTrasnport Cuidador', Colors.white,
-                 Color.fromARGB(255, 0, 18, 67),
+                  Navigator.pushNamed(context, LoginViewRoute);
+                }, 'MedTrasnport Paciente', Colors.white,
+                Color.fromARGB(255, 41, 114, 87),
                 const StadiumBorder(),
                 15,
                 FontWeight.w700,
                 4.0,
-               const Color.fromARGB(255, 38, 186, 255)),
+                const Color(0xFF00C49A)),
             SizedBox(
               height: getHeight(context) / 20,
             ),
             ULink(
-                () {Navigator.pushNamed(context, AccessCodeViewRoute);}, "Como obtenho o meu código de acesso?", Colors.grey, 15)
+                () {Navigator.pushNamed(context, RegisterCuidadorRoute);}, "Ainda não está registado? Registe-se aqui", Colors.grey, 15)
           ],
         ));
   }

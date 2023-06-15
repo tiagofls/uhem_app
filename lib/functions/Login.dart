@@ -21,6 +21,20 @@ Future<bool> Login(BuildContext context, String sns, String code) async {
   }
 }
 
+Future<bool> LoginCuidador(BuildContext context, String sns, String code) async {
+  if (await CheckLoginInputs(context, sns, code)) {
+    if (await AuthenticateCuidador(sns, code)) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('username', sns);
+      return true;
+    }
+    UAlertDialog(context, invalidCred, invalidSnsOrCode);
+    return false;
+  } else {
+    return false;
+  }
+}
+
 Future<bool> CheckLoginInputs(
     BuildContext context, String sns, String code) async {
   String body = "";
@@ -52,7 +66,26 @@ Future<bool> Authenticate(String sns, String code) async {
 
   var mUrl = Uri.parse(url);
   var res = await http.get(mUrl, headers: headers);
-  
+
+  if (res.body == "false") {
+    return false;
+  } else {
+    addStringToSF(sns);
+    return true;
+  }
+}
+
+Future<bool> AuthenticateCuidador(String sns, String code) async {
+  var headers = {
+    'accept': 'text/plain',
+  };
+
+  String url =
+      "${baseUrl}LoginInfo/verify_pwd?sns=$sns&password=$code&flag=CUIDADOR";
+
+  var mUrl = Uri.parse(url);
+  var res = await http.get(mUrl, headers: headers);
+
   if (res.body == "false") {
     return false;
   } else {
@@ -63,28 +96,50 @@ Future<bool> Authenticate(String sns, String code) async {
 
 addStringToSF(String sns) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  prefs.setString('stringValue', sns);
+  prefs.setString('sns', sns);
 }
 
-Future<bool> getStringValuesSF() async {
+Future<bool> getsnssSF() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  String? stringValue = prefs.getString('stringValue');
-  return stringValue != null ? true : false;
+  String? sns = prefs.getString('sns');
+  return sns != null ? true : false;
+}
+
+Future<String> getCurrentSns() async {
+  var prefs = await SharedPreferences.getInstance();
+  String? sns = prefs.getString('sns');
+  return sns ?? "";
+}
+
+Future<String> getCurrentCuidador() async {
+  var prefs = await SharedPreferences.getInstance();
+  String? sns = prefs.getString('username');
+  return sns ?? "";
+}
+
+String getCurrentSnsAsString() {
+  String sns = "";
+
+  var sns2 = getCurrentSns();
+  sns2.then((value) {
+    sns = value;
+  });
+
+  return sns;
 }
 
 removeValues() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   //Remove String
-  prefs.remove("stringValue");
+  prefs.remove("sns");
 }
 
-logout(BuildContext context){
+logout(BuildContext context) {
   removeValues();
   Navigator.pushNamed(context, LoginViewRoute);
 }
 
-Future<bool> verifyGenerateAccessCode(String myToken, String username) async{
-
+Future<bool> verifyGenerateAccessCode(String myToken, String username) async {
   var headers = {
     'accept': 'text/plain',
   };
@@ -94,22 +149,20 @@ Future<bool> verifyGenerateAccessCode(String myToken, String username) async{
 
   var mUrl = Uri.parse(url);
   var res = await http.get(mUrl, headers: headers);
-  
+
   if (res.body == "false") {
     return false;
   } else {
     return true;
   }
-
 }
 
-Future<bool> GenerateToken(String sns, String username) async{
-   var headers = {
+Future<bool> GenerateToken(String sns, String username) async {
+  var headers = {
     'accept': 'text/plain',
   };
 
-  String url =
-      "${baseUrl}LoginInfo/token?sns=$sns&username=$username";
+  String url = "${baseUrl}LoginInfo/token?sns=$sns&username=$username";
   var mUrl = Uri.parse(url);
   var res = await http.get(mUrl, headers: headers);
   print("Result: " + res.body + "->" + res.toString());
@@ -120,3 +173,47 @@ Future<bool> GenerateToken(String sns, String username) async{
   }
 }
 
+Future<bool> TokenCuidador(String email) async {
+  var headers = {
+    'accept': 'text/plain',
+  };
+
+  String url = "${baseUrl}LoginInfo/token-cuidador?email=$email";
+  var mUrl = Uri.parse(url);
+  var res = await http.get(mUrl, headers: headers);
+  if (res.body == "false" || res.body.contains("xception")) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+Future<bool> CuidadorVerifyToken(String username, String token, String password) async {
+  var headers = {
+    'accept': 'text/plain',
+  };
+
+  String url = "${baseUrl}LoginInfo/verify-token-cuidador?username=$username&token=$token&password=$password";
+  var mUrl = Uri.parse(url);
+  var res = await http.get(mUrl, headers: headers);
+  if (res.body == "false" || res.body.contains("xception")) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
+Future<bool> AssocSns(String username, String sns) async {
+  var headers = {
+    'accept': 'text/plain',
+  };
+
+  String url = "${baseUrl}LoginInfo/set-sns?username=$username&sns=$sns";
+  var mUrl = Uri.parse(url);
+  var res = await http.get(mUrl, headers: headers);
+  if (res.body == "false" || res.body.contains("xception")) {
+    return false;
+  } else {
+    return true;
+  }
+}

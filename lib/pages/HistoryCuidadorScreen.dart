@@ -18,18 +18,18 @@ import '../widgets/TravelTile.dart';
 import '../widgets/ULink.dart';
 import '../widgets/UText.dart';
 
-class HistoryScreen extends StatefulWidget {
-  const HistoryScreen({super.key});
+class HistoryCuidadorScreen extends StatefulWidget {
+  const HistoryCuidadorScreen({super.key});
 
   @override
-  State<HistoryScreen> createState() => _HistoryScreenState();
+  State<HistoryCuidadorScreen> createState() => _HistoryCuidadorScreenState();
 }
 
-class _HistoryScreenState extends State<HistoryScreen> {
+class _HistoryCuidadorScreenState extends State<HistoryCuidadorScreen> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: getPatient(),
+      future: getPatientCuidador(),
       builder: (context, AsyncSnapshot<Patient> p) {
         return Container(
           color: const Color.fromRGBO(255, 255, 255, 1),
@@ -40,11 +40,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
               ),
               RoadCarImage(context),
               SizedBox(height: getHeight(context) / 30),
-              AppTitle(context, 35, "Dashboard"),
+              AppTitleCuidador(context, 35, "Dashboard"),
               const SizedBox(
                 height: 45,
               ),
-              CardID(context, p.data ?? pt),
+              CardIDCuidador(context, p.data ?? pt, "Aurélio Buta"),
               const SizedBox(
                 height: 40,
               ),
@@ -77,7 +77,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                     getDate(travel.dateTravel!),
                                     travel.idTravelPurpose.toString(),
                                     travel.idFacility.toString(),
-                                    travel.dateTravel!.split(" ")[0]
+                                    ""
                                   ),
                                 ),
                               )
@@ -104,11 +104,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   GestureDetector(
                     onTap: () {
                       // Handle history link click here
-                      Navigator.pushNamed(context, HistoryScreenRoute);
+                      Navigator.pushNamed(context, CuidadorHomeRoute);
                     },
                     child: ULink(
                       () {
-                        Navigator.pushNamed(context, HomeViewRoute);
+                        Navigator.pushNamed(context, CuidadorHomeRoute);
                       },
                       "Próximas Viagens",
                       Colors.grey,

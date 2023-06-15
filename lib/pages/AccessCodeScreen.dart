@@ -55,6 +55,7 @@ class _AccessCodeScreenState extends State<AccessCodeScreen> {
           InputText(context, 'E-mail', 'Introduza o seu e-mail', emailCtrl),
           const SizedBox(height: 25,),
             UButton(() async {
+              print("Continuar no codigo de acesso");
               if( await GenerateToken(snsCtrl.text, emailCtrl.text)){
                 Navigator.pushNamed(context, ConfirmAccessCodeViewRoute);
               }
